@@ -20,5 +20,5 @@ class LLMConnection:
     
 
 def establish_remote_connection():
-    client = OpenAI(base_url=os.environ.get('BASE_URL'), api_key=os.environ.get('LLM_KEY'))
+    client = OpenAI(base_url=os.environ.get('LLM_BASE_URL'), api_key=os.environ.get('LLM_KEY'))
     return client

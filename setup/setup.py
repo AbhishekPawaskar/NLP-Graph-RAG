@@ -9,7 +9,7 @@ class Neo4jConnection:
 
     def __init__(self):
         if Neo4jConnection._instance is None:
-            Neo4jConnection._instance = GraphDatabase.driver("bolt://localhost:7687", auth=("neo4j", "password"))
+            Neo4jConnection._instance = GraphDatabase.driver(os.environ.get('GRAPH_DB_URL'), auth=(os.environ.get('GRAPH_DB_USERNAME'), os.environ.get('GRAPH_DB_PASSWORD')))
         else:
             raise Exception("Attempting to create a second Neo4jConnection instance")
 
@@ -21,12 +21,12 @@ class Neo4jConnection:
 
 def add_genre_node(genre:str):
     records, summary, keys = driver.execute_query(
-        "CREATE (g:GENRE {genre: $genre})",
+        "CREATE (g:GENRE {name: $genre})",
         genre=genre)
 
 def add_language_node(language:str):
     records, summary, keys = driver.execute_query(
-        "CREATE (l:LANGUAGE {language: $language})",
+        "CREATE (l:LANGUAGE {name: $language})",
         language=language)
 
 def add_movie_node(movie_name:str,overview:str,cast:str):
@@ -37,16 +37,14 @@ def add_movie_node(movie_name:str,overview:str,cast:str):
         cast=cast)
 
 def add_genre_edge(movie_name:str,genre:str):
-    query = """MATCH (m:MOVIE {name: $name}), (g:GENRE {genre: $genre})
-        CREATE (m)-[:GENRE]->(g)"""
+    query = """MATCH (m:MOVIE {name: $name}), (g:GENRE {name: $genre}) CREATE (m)-[:GENRE]->(g)"""
     records, summary, keys = driver.execute_query(
         query,
         name=movie_name,
         genre=genre)
 
 def add_lang_edge(movie_name:str,language:str):
-    query = """MATCH (m:MOVIE {name: $name}), (l:LANGUAGE {language: $language})
-    CREATE (m)-[:LANGUAGE]->(l)"""
+    query = """MATCH (m:MOVIE {name: $name}), (l:LANGUAGE {name: $language}) CREATE (m)-[:LANGUAGE]->(l)"""
     records, summary, keys = driver.execute_query(
         query,
         name=movie_name,
@@ -54,6 +52,7 @@ def add_lang_edge(movie_name:str,language:str):
 
 if __name__ == "__main__":
     data = pd.read_csv("/app/assets/imdb_movies.csv")
+    print("loaded data")
     data = data.dropna()
 
     lang_list = []
@@ -93,9 +92,11 @@ if __name__ == "__main__":
 
     for i in genre_list:
         add_genre_node(genre=i)
+    print("genre uploaded")
 
     for i in lang_list:
         add_language_node(language=i)
+    print("language uploaded")
 
     for row in data.iterrows():
         row_data = row[1].to_dict()
@@ -110,5 +111,8 @@ if __name__ == "__main__":
         if (l_list != None) or (l_list!=[]):
             for l in l_list:
                 add_lang_edge(movie_name=row_data["orig_title"],language=l)
+    print("movie uploaded")
+
+    print("##### UPLOAD COMPLETE #####")
     
     

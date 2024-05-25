@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  chat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "4000:80"
+      - "5678:5678"
+    environment:
+      - GRAPH_DB_URL=bolt://graph-db:7687
+      - GRAPH_DB_USERNAME=neo4j
+      - GRAPH_DB_PASSWORD=password
+      - LLM_KEY=lm-studio
+      - LLM_BASE_URL=http://host.docker.internal:1234/v1
+    volumes:
+      - .:/app
+
+  graph-db:
+    image: neo4j:4.4-community
+    ports:
+      - "7473:7473"
+      - "7474:7474"
+      - "7687:7687"
+
+  setup:
+    build:
+      context: ./setup
+      dockerfile: Dockerfile.setup
+    environment:
+      - GRAPH_DB_URL=bolt://graph-db:7687
+      - GRAPH_DB_USERNAME=neo4j
+      - GRAPH_DB_PASSWORD=password
+    restart: "no"
