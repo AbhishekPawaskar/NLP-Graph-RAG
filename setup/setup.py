@@ -1,4 +1,5 @@
 import os
+import sys
 import unicodedata
 import pandas as pd
 from neo4j import GraphDatabase
@@ -51,68 +52,73 @@ def add_lang_edge(movie_name:str,language:str):
         language=language)
 
 if __name__ == "__main__":
-    data = pd.read_csv("/app/assets/imdb_movies.csv")
-    print("loaded data")
-    data = data.dropna()
+    try:
+        data = pd.read_csv("/app/assets/imdb_movies.csv")
+        print("loaded data")
+        data = data.dropna()
 
-    lang_list = []
-    lang_slice = data.iloc[:]["orig_lang"].to_list()
-    for i in lang_slice:
-        if type(i)==str:
-            j = i.split(', ')
-            for lang in j:
-                if lang not in lang_list:
-                    lang_list.append(lang)
+        lang_list = []
+        lang_slice = data.iloc[:]["orig_lang"].to_list()
+        for i in lang_slice:
+            if type(i)==str:
+                j = i.split(', ')
+                for lang in j:
+                    if lang not in lang_list:
+                        lang_list.append(lang)
+                    else:
+                        continue
+
+        genre_list = []
+        genre_slice = data.iloc[:]["genre"].to_list()
+        for i in genre_slice:
+            if type(i)==str:
+                j = unicodedata.normalize('NFKC', i).split(', ')
+                for genre in j:
+                    if genre not in genre_list:
+                        genre_list.append(genre)
+                    else:
+                        continue
+
+        year_list = []
+        date_slice = data.iloc[:]["date_x"].to_list()
+        for i in date_slice:
+            if type(i)==str:
+                j = i.split("/")[-1]
+                if j not in year_list:
+                    year_list.append(j)
                 else:
                     continue
 
-    genre_list = []
-    genre_slice = data.iloc[:]["genre"].to_list()
-    for i in genre_slice:
-        if type(i)==str:
-            j = unicodedata.normalize('NFKC', i).split(', ')
-            for genre in j:
-                if genre not in genre_list:
-                    genre_list.append(genre)
-                else:
-                    continue
-
-    year_list = []
-    date_slice = data.iloc[:]["date_x"].to_list()
-    for i in date_slice:
-        if type(i)==str:
-            j = i.split("/")[-1]
-            if j not in year_list:
-                year_list.append(j)
-            else:
-                continue
-
-    driver = Neo4jConnection.get_driver()
+        driver = Neo4jConnection.get_driver()
 
 
-    for i in genre_list:
-        add_genre_node(genre=i)
-    print("genre uploaded")
+        for i in genre_list:
+            add_genre_node(genre=i)
+        print("genre uploaded")
 
-    for i in lang_list:
-        add_language_node(language=i)
-    print("language uploaded")
+        for i in lang_list:
+            add_language_node(language=i)
+        print("language uploaded")
 
-    for row in data.iterrows():
-        row_data = row[1].to_dict()
-        g_list = unicodedata.normalize('NFKC', row_data['genre']).split(', ')
-        l_list = row_data['orig_lang'].split(', ')
-        add_movie_node(movie_name=row_data["orig_title"], 
-                    overview=row_data["overview"], 
-                    cast=row_data["crew"])
-        if (g_list != None) or (g_list!=[]):
-            for g in g_list:
-                add_genre_edge(movie_name=row_data["orig_title"],genre=g)
-        if (l_list != None) or (l_list!=[]):
-            for l in l_list:
-                add_lang_edge(movie_name=row_data["orig_title"],language=l)
-    print("movie uploaded")
+        for row in data.iterrows():
+            row_data = row[1].to_dict()
+            g_list = unicodedata.normalize('NFKC', row_data['genre']).split(', ')
+            l_list = row_data['orig_lang'].split(', ')
+            add_movie_node(movie_name=row_data["orig_title"], 
+                        overview=row_data["overview"], 
+                        cast=row_data["crew"])
+            if (g_list != None) or (g_list!=[]):
+                for g in g_list:
+                    add_genre_edge(movie_name=row_data["orig_title"],genre=g)
+            if (l_list != None) or (l_list!=[]):
+                for l in l_list:
+                    add_lang_edge(movie_name=row_data["orig_title"],language=l)
+        print("movie uploaded")
 
-    print("##### UPLOAD COMPLETE #####")
+        print("##### UPLOAD COMPLETE #####")
+        sys.exit(0)
+    except Exception as e:
+        print("##### UPLOAD FAILED #####")
+        sys.exit(1)
     
     

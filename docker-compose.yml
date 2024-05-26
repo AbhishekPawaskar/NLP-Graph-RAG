@@ -1,9 +1,22 @@
 version: '3'
 
 services:
-  chat:
+  frontend:
     build:
-      context: .
+      context: ./frontend
+      dockerfile: Dockerfile.frontend
+    ports:
+      - 8501:8501
+    environment:
+      - BACKEND_CHAT_URL=http://backend-app:80/chat/converse
+    volumes:
+      - ./frontend:/app
+    depends_on:
+      - backend-app
+
+  backend-app:
+    build:
+      context: ./backend
       dockerfile: Dockerfile
     ports:
       - "4000:80"
@@ -15,7 +28,9 @@ services:
       - LLM_KEY=lm-studio
       - LLM_BASE_URL=http://host.docker.internal:1234/v1
     volumes:
-      - .:/app
+      - ./backend:/app
+    depends_on:
+      - graph-db
 
   graph-db:
     image: neo4j:4.4-community
@@ -32,4 +47,8 @@ services:
       - GRAPH_DB_URL=bolt://graph-db:7687
       - GRAPH_DB_USERNAME=neo4j
       - GRAPH_DB_PASSWORD=password
+    volumes:
+      - ./setup:/app
+    depends_on:
+      - graph-db
     restart: "no"

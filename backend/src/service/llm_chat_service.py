@@ -17,9 +17,9 @@ class ChatService:
                             """
         self.instructions_for_query_gen_template =  """You are an experienced graph databases developer. 
                                                     This is the schema representation of a Neo4j database consisting of Movie Information Database.
-                                                    \n\n\n """+self.graph_schema+""" \n\n\n Based on this schema, Generate CYPHER Query for Neo4j to 
+                                                    \n\n\n """+self.graph_schema+""" \n\n\n Based on this schema, Generate a SINGLE CYPHER Query for Neo4j to 
                                                     retirive relevant information from data for the user's query strictly following sample srutcture\n
-                                                    \n{\n'query1':'<QUERY>,\n'query2':'<QUERY>'\n}\n"""
+                                                    \n```cypher<CYPHER-QUERY>```"""
         
         self.instructions_for_response_gen_template = """ You are an Assistant and you are supposed to answer User's query precisely in natural language. 
                                                     Do not mention in your response anything about following/n/n Hint:"""
@@ -33,8 +33,11 @@ class ChatService:
                                                          temperature=0.3,)
         return llm_output.choices[0].message.content
 
-    def get_query_response(self, user_query:str, retrival_result:str):
-        instructions = self.instructions_for_response_gen_template+retrival_result
+    def get_query_response(self, user_query:str, retrival_result):
+        if retrival_result != None:
+            instructions = self.instructions_for_response_gen_template+retrival_result
+        else:
+            instructions = self.instructions_for_response_gen_template
         history = [
             {"role": "system", "content": instructions},
             {"role": "user", "content": user_query},]
