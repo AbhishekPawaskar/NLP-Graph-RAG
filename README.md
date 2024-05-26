@@ -14,14 +14,7 @@ This repository bears the source code for setup, deployment of LLM based Retriva
 
 Following is the Diagram representing the system Overview.
 
-
-
-
-
-
-
-
-
+![Picture1](https://github.com/AbhishekPawaskar/NLP-Graph-RAG/assets/46342691/e8c1d4c5-28d4-4a8e-be43-1f76b485aafb)
 
 The Tech Stack are ars follows:
 1. Frontend - Streamlit
@@ -49,6 +42,9 @@ b. Navigate to search and look for `TheBloke/Llama-2-7B-Chat-GGUF/llama-2-7b-cha
 c. Navigate to local Server and load the model.
 
 d. The LLM is now available for requests.
+
+![image](https://github.com/AbhishekPawaskar/NLP-Graph-RAG/assets/46342691/ada0b816-e6b3-4956-915e-fb29a7328e09)
+
 
 
 ### b. Build & Run the Microservice:
