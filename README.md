@@ -73,3 +73,9 @@ $  docker-compose up
  6. Navigate to `http://localhost:8501` on browser for the frontend interface to post queries and receive results. 
 
  (NOTE: the time taken to generate might be more than expected due to resource sharing and consumption)
+
+
+ ## Aditional Snaps: 
+ 1. From Graph Database Dashboard
+    ![image](https://github.com/AbhishekPawaskar/NLP-Graph-RAG/assets/46342691/82999806-3772-44b4-b9d2-355484bfdbc9)
+
