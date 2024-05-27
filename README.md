@@ -14,7 +14,7 @@ This repository bears the source code for setup, deployment of LLM based Retriva
 
 Following is the Diagram representing the system Overview.
 
-![Picture1](https://github.com/AbhishekPawaskar/NLP-Graph-RAG/assets/46342691/e8c1d4c5-28d4-4a8e-be43-1f76b485aafb)
+![Picture1](https://github.com/AbhishekPawaskar/NLP-Graph-RAG/assets/46342691/730e1942-6e12-490b-a269-08c1e38d275f)
 
 The Tech Stack are ars follows:
 1. Frontend - Streamlit
