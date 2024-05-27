@@ -16,7 +16,7 @@ Following is the Diagram representing the system Overview.
 
 ![Picture1](https://github.com/AbhishekPawaskar/NLP-Graph-RAG/assets/46342691/730e1942-6e12-490b-a269-08c1e38d275f)
 
-The Tech Stack are ars follows:
+The Tech Stack are as follows:
 1. Frontend - Streamlit
 2. Backend - FastAPI
 3. LLMs - Llama2 (using LM Studio)
